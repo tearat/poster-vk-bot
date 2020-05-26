@@ -88,7 +88,7 @@ for event in longpoll.listen():
                 elif event.obj['message']['text'] == 'ls':
                     list = glob.glob(images_folder + "/*.*")
                     say("В базе целых %s картиночек" % str(len(list)))
-                    say(str(list))
+                    # say(str(list))
                 elif event.obj['message']['text'] == 'post':
                     if( len(glob.glob(images_folder + "/*.*")) > 0 ):
                         list = glob.glob(images_folder + "/*.*")
