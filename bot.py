@@ -27,6 +27,8 @@ vk_api_user = vk_session_user.get_api()
 
 print("Bot ready")
 
+images_folder = os.path.dirname(__file__) + '/images'
+
 def post_image(from_id, filename):
     # # Getting upload server
     print(bcolors.WARNING + "[2/6] Getting upload server..." + bcolors.ENDC)
@@ -81,19 +83,21 @@ for event in longpoll.listen():
                     longpoll.end()
                 elif event.obj['message']['text'] == 'test':
                     say("Привет! Я работаю "+where+": "+str(time.time()))
+                elif event.obj['message']['text'] == 'f':
+                    say(os.path.dirname(__file__))
                 elif event.obj['message']['text'] == 'ls':
-                    list = glob.glob("images/*.*")
+                    list = glob.glob(images_folder + "/*.*")
                     say("В базе целых %s картиночек" % str(len(list)))
                     say(str(list))
                 elif event.obj['message']['text'] == 'post':
-                    if( len(glob.glob("images/*.*")) > 0 ):
-                        list = glob.glob("images/*.*")
+                    if( len(glob.glob(images_folder + "/*.*")) > 0 ):
+                        list = glob.glob(images_folder + "/*.*")
                         filename = random.choice(list)
                         post_image(from_id, filename)
                     else:
                         say("В базе сейчас нет картинок")
                 elif len(event.obj['message']['text'].split(' ')) == 3 and event.obj['message']['text'].split(' ')[0] == 'timer':
-                    if len(glob.glob("images/*.*")) == 0:
+                    if len(glob.glob(images_folder + "/*.*")) == 0:
                         say("В базе сейчас нет картинок")
                     else:
                         delta = 0
@@ -103,9 +107,9 @@ for event in longpoll.listen():
                         if event.obj['message']['text'].split(' ')[2] == 'm':
                             multiplier = 60
                         say("Установлена автоматическая загрузка с интервалом %s" % str(delta * multiplier))
-                        while len(glob.glob("images/*.*")) > 0:
+                        while len(glob.glob(images_folder + "/*.*")) > 0:
                             time.sleep(delta * multiplier)
-                            list = glob.glob("images/*.*")
+                            list = glob.glob(images_folder + "/*.*")
                             filename = random.choice(list)
                             post_image(from_id, filename)
                 else:
@@ -113,11 +117,11 @@ for event in longpoll.listen():
             else:
                 # Saving image to /images
                 print(bcolors.WARNING + "[1/6] Saving images from attachments..." + bcolors.ENDC)
-                if not os.path.isdir('./images'):
-                    os.mkdir('./images')
+                if not os.path.isdir(images_folder):
+                    os.mkdir(images_folder)
                 for i, attachment in enumerate(attachments):
                     image_url = attachment['photo']['sizes'][6]['url']
                     ext = image_url.split('.')[-1]
                     filename = str(time.time()) + '-' + str(i)
-                    urllib.request.urlretrieve(image_url, "images/%s.%s" % (filename, ext))
+                    urllib.request.urlretrieve(image_url, images_folder + "/%s.%s" % (filename, ext))
                     say("Картинка %s.%s загружена на сервер" % (filename, ext))
