@@ -108,6 +108,7 @@ for event in longpoll.listen():
                             multiplier = 60
                         say("Установлена автоматическая загрузка с интервалом %s" % str(delta * multiplier))
                         while len(glob.glob(images_folder + "/*.*")) > 0:
+                            say("Осталось картиночек: %s" % str(len(glob.glob(images_folder + "/*.*"))))
                             time.sleep(delta * multiplier)
                             list = glob.glob(images_folder + "/*.*")
                             filename = random.choice(list)
