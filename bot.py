@@ -9,6 +9,7 @@ import os
 import time
 import glob
 import random
+import re
 
 class bcolors:
     WARNING = '\033[93m'
@@ -28,6 +29,8 @@ vk_api_user = vk_session_user.get_api()
 print("Bot ready")
 
 images_folder = os.path.dirname(__file__) + '/images'
+
+
 
 def post_image(from_id, filename):
     # # Getting upload server
@@ -69,8 +72,49 @@ def post_image(from_id, filename):
     print(bcolors.OKGREEN + "Done!" + bcolors.ENDC)
     print()
 
+
+
 def say(text):
     vk_api_group.messages.send(user_id=from_id, random_id=get_random_id(), message=text)
+
+
+
+def load():
+    if( len(glob.glob(images_folder + "/*.*")) > 0 ):
+        list = glob.glob(images_folder + "/*.*")
+        filename = random.choice(list)
+        post_image(from_id, filename)
+    else:
+        say("В базе сейчас нет картинок")
+
+
+
+def autoload(delta, type, limit):
+    delta = int(delta)
+    if len(glob.glob(images_folder + "/*.*")) == 0:
+        say("В базе сейчас нет картинок")
+        return
+    if type == 'm':
+        delta = delta * 60
+    elif type == 'h':
+        delta = delta * 3600
+
+    if limit is None:
+        say("Установлена автоматическая загрузка с интервалом %s секунд" % str(delta))
+        limit = len(glob.glob(images_folder + "/*.*"))
+    elif limit is not None:
+        say("Установлена загрузка %s картинок с интервалом %s секунд" % (str(limit), str(delta)))
+        limit = int(limit)
+
+    while limit > 0:
+        say("Осталось картиночек: %s" % str(limit))
+        time.sleep(delta)
+        list = glob.glob(images_folder + "/*.*")
+        filename = random.choice(list)
+        post_image(from_id, filename)
+        limit -= 1
+
+
 
 for event in longpoll.listen():
     if event.type == VkBotEventType.MESSAGE_NEW:
@@ -78,41 +122,23 @@ for event in longpoll.listen():
         if from_id == int(user_id):
             attachments = event.object.message['attachments']
             if not attachments:
-                if event.obj['message']['text'] == 'end':
+                message = event.obj['message']['text']
+                if re.match(r'end', message):
                     say("Бот отключён")
                     longpoll.end()
-                elif event.obj['message']['text'] == 'test':
-                    say("Привет! Я работаю "+where+": "+str(time.time()))
-                elif event.obj['message']['text'] == 'f':
-                    say(os.path.dirname(__file__))
-                elif event.obj['message']['text'] == 'ls':
+                elif re.match(r'test', message):
+                    say("Привет! Я работаю " + where)
+                elif re.match(r'ls', message):
                     list = glob.glob(images_folder + "/*.*")
                     say("В базе целых %s картиночек" % str(len(list)))
-                    # say(str(list))
-                elif event.obj['message']['text'] == 'post':
-                    if( len(glob.glob(images_folder + "/*.*")) > 0 ):
-                        list = glob.glob(images_folder + "/*.*")
-                        filename = random.choice(list)
-                        post_image(from_id, filename)
-                    else:
-                        say("В базе сейчас нет картинок")
-                elif len(event.obj['message']['text'].split(' ')) == 3 and event.obj['message']['text'].split(' ')[0] == 'timer':
-                    if len(glob.glob(images_folder + "/*.*")) == 0:
-                        say("В базе сейчас нет картинок")
-                    else:
-                        delta = 0
-                        multiplier = 1
-                        if event.obj['message']['text'].split(' ')[1]:
-                            delta = int(event.obj['message']['text'].split(' ')[1])
-                        if event.obj['message']['text'].split(' ')[2] == 'm':
-                            multiplier = 60
-                        say("Установлена автоматическая загрузка с интервалом %s" % str(delta * multiplier))
-                        while len(glob.glob(images_folder + "/*.*")) > 0:
-                            say("Осталось картиночек: %s" % str(len(glob.glob(images_folder + "/*.*"))))
-                            time.sleep(delta * multiplier)
-                            list = glob.glob(images_folder + "/*.*")
-                            filename = random.choice(list)
-                            post_image(from_id, filename)
+                elif re.match(r'post', message):
+                    load()
+                elif re.match(r'timer\s\d+[s|m|h]$', message):
+                    (delta, type) = re.findall(r'timer\s(\d+)([s|m|h])', message)[0]
+                    autoload(delta, type, limit=None)
+                elif re.match(r'timer\s\d+[s|m|h]\s\d+', message):
+                    (delta, type, limit) = re.findall(r'timer\s(\d+)([s|m|h])\s(\d+)', message)[0]
+                    autoload(delta, type, limit)
                 else:
                     say('Такой команды нет :С')
             else:
