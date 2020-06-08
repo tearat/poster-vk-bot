@@ -123,20 +123,20 @@ for event in longpoll.listen():
             attachments = event.object.message['attachments']
             if not attachments:
                 message = event.obj['message']['text']
-                if re.match(r'end', message):
+                if re.match(r'end', message, re.IGNORECASE):
                     say("Бот отключён")
                     longpoll.end()
-                elif re.match(r'test', message):
+                elif re.match(r'test', message, re.IGNORECASE):
                     say("Привет! Я работаю " + where)
-                elif re.match(r'ls', message):
+                elif re.match(r'ls', message, re.IGNORECASE):
                     list = glob.glob(images_folder + "/*.*")
                     say("В базе целых %s картиночек" % str(len(list)))
-                elif re.match(r'post', message):
+                elif re.match(r'post', message, re.IGNORECASE):
                     load()
-                elif re.match(r'timer\s\d+[s|m|h]$', message):
+                elif re.match(r'timer\s\d+[s|m|h]$', message, re.IGNORECASE):
                     (delta, type) = re.findall(r'timer\s(\d+)([s|m|h])', message)[0]
                     autoload(delta, type, limit=None)
-                elif re.match(r'timer\s\d+[s|m|h]\s\d+', message):
+                elif re.match(r'timer\s\d+[s|m|h]\s\d+', message, re.IGNORECASE):
                     (delta, type, limit) = re.findall(r'timer\s(\d+)([s|m|h])\s(\d+)', message)[0]
                     autoload(delta, type, limit)
                 else:
