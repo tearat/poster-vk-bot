@@ -147,7 +147,14 @@ for event in longpoll.listen():
                 if not os.path.isdir(images_folder):
                     os.mkdir(images_folder)
                 for i, attachment in enumerate(attachments):
-                    image_url = attachment['photo']['sizes'][6]['url']
+                    max_size = 0
+                    max_size_index = 0
+                    for j, size in enumerate(attachment['photo']['sizes']):
+                        if size['height'] > max_size:
+                            max_size = size['height']
+                            max_size_index = j
+
+                    image_url = attachment['photo']['sizes'][max_size_index]['url']
                     ext = image_url.split('.')[-1]
                     filename = str(time.time()) + '-' + str(i)
                     urllib.request.urlretrieve(image_url, images_folder + "/%s.%s" % (filename, ext))
