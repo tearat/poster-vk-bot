@@ -1,21 +1,23 @@
-# Ramzan-vk-bot
+# Poster-vk-bot
 
-## Шо ето такое
+## What's this???
 
-Бот подключается по токену группы и данным пользователя и отправляет картинки на стену группы от имени пользователя.
+Bot connects with a group token.
 
-Картинки отправляются боту в ЛС и сохраняются в его папке на пк/сервере. Отправляется картинка либо командой `post` мгновенно, либо по таймеру с лимитом или без. Больше он пока ничего не умеет ¯\\_(ツ)_/¯
+Images DMed to the bot will be saved to a local folder on the server.
 
-## Доступные команды
+When posting is initiated, saved images will be posted on the group's wall and then removed from the local folder.
 
-`test` - протестировать, включён ли бот
+## Available commands
 
-`ls` - получить количество и список картинок в папке
+`test` - tests if the bot is running
 
-`post` - отправить случайную картинку
+`ls` - get current files count in the local folder
 
-`timer N[s|m|h]` (например `timer 10s`) - включить таймер, который отправит все картинки через каждые N секунд (s), минут (m) или часов (h)
+`post` - posts a random image from the local folder
 
-`timer N[s|m|h] L` (например `timer 5m 10`) - включить таймер, который отправит L картинок через каждые N секунд (s), минут (m) или часов (h)
+`timer N[s|m|h]` (e.g. `timer 10s`) - queues up **all** available images for posting with an N seconds (s), minutes (m), or hours (h) interval
 
-`end` - завершить работу бота
+`timer N[s|m|h] L` (e.g. `timer 5m 10`) - same as the previous command but limits (L) the total number of queued images
+
+`end` - kills the bot

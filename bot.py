@@ -1,7 +1,7 @@
 from vk_api import *
 from vk_api.utils import get_random_id
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
-from config import *
+from config import * # Create this file before start
 
 import requests
 import urllib.request
