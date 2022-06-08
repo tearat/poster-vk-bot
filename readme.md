@@ -20,4 +20,4 @@ When posting is initiated, saved images will be posted on the group's wall and t
 
 `timer N[s|m|h] L` (e.g. `timer 5m 10`) - same as the previous command but limits (L) the total number of queued images
 
-`end` - kills the bot
+`kill` - kills the bot

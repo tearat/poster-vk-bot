@@ -123,7 +123,7 @@ for event in longpoll.listen():
             attachments = event.object.message['attachments']
             if not attachments:
                 message = event.obj['message']['text']
-                if re.match(r'end', message, re.IGNORECASE):
+                if re.match(r'kill', message, re.IGNORECASE):
                     say("Бот отключён")
                     longpoll.end()
                 elif re.match(r'test', message, re.IGNORECASE):
