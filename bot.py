@@ -28,7 +28,7 @@ vk_api_user = vk_session_user.get_api()
 
 print("Bot ready")
 
-images_folder = os.path.dirname(__file__) + '/images'
+images_folder = os.path.join(os.path.dirname(__file__), 'images')
 
 
 
@@ -157,5 +157,7 @@ for event in longpoll.listen():
                     image_url = attachment['photo']['sizes'][max_size_index]['url']
                     ext = image_url.split('.')[-1]
                     filename = str(time.time()) + '-' + str(i)
-                    urllib.request.urlretrieve(image_url, images_folder + "/%s.%s" % (filename, ext))
+                    new_file_name = "%s.%s" % (filename, ext.split('?')[0])
+                    target = os.path.join(images_folder, new_file_name)
+                    urllib.request.urlretrieve(image_url, target)
                     say("Картинка %s.%s загружена на сервер" % (filename, ext))
